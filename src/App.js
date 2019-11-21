@@ -2,9 +2,10 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import 'antd/dist/antd.css';
-import { Input, Layout, Button, List } from 'antd';
+import { Input, Layout, Button, List, Select } from 'antd';
 
-const { Header, Sider, Content } = Layout
+const { Header, Sider, Content } = Layout;
+const { Option } = Select;
 
 class App extends React.Component {
 
@@ -12,9 +13,14 @@ class App extends React.Component {
     super(props)
     this.state = {
       search: '',
-      list: []
+      list: [],
+      items: ['Block BBB', 'Test']
     }
   }
+
+  // handleChange = (value) => {
+  //   console.log(`${value}`);
+  // }
 
   fetchMyData = (string) => {
     fetch(`/send-command?command=${string}`, {
@@ -41,7 +47,7 @@ class App extends React.Component {
 
   render() {
     
-    const { search, list } = this.state;
+    const { search, list, items } = this.state;
 
     console.log(this.state)
 
@@ -55,8 +61,27 @@ class App extends React.Component {
                 minHeight: 280,
               }}
             >
-        <Input placeholder="Basic usage" onChange={e => this.setState({ search: e.target.value })} value={search} />
-        <Button type="primary" onClick={() => this.fetchMyData(search)}>Primary</Button>
+            <Select 
+              onChange={e => this.setState({ search: e })}
+              style={{ width: 480 }}
+              placeholder="Choose Command"
+              dropdownRender={menu => (
+              <div>
+                {menu}
+                <div
+                  style={{ padding: '4px 8px', cursor: 'pointer' }}
+                  onMouseDown={e => e.preventDefault()}
+                >
+                </div>
+              </div>
+              )}
+            >
+              {items.map(item => (
+              <Option key={item}>{item}</Option>
+              ))}
+            </Select>
+
+        <Button type="primary" onClick={() => this.fetchMyData(search)}>Send Command</Button>
   
         <List
           size="large"
@@ -66,7 +91,7 @@ class App extends React.Component {
           dataSource={list}
           renderItem={item => <List.Item>{item}</List.Item>}
         />
-            </Content>
+        </Content>
       </div>
     );
   }
