@@ -2,10 +2,10 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import 'antd/dist/antd.css';
-import { Input, Layout, Button, List, Select } from 'antd';
+import { Input, Layout, Button, List, AutoComplete } from 'antd'; // Select,
 
 const { Header, Sider, Content } = Layout;
-const { Option } = Select;
+// const { Option } = Select;
 
 class App extends React.Component {
 
@@ -14,13 +14,14 @@ class App extends React.Component {
     this.state = {
       search: '',
       list: [],
-      items: ['Block BBB', 'Test']
+      items: ['Загрузить ключи', 'Сбросить ключи', 'Обновить ключи', 
+              'Включить банкомат', 'Выключить банкомат', 'Перезагрузить банкомат',
+              'Сообщить состояние устройств', 
+              'Сообщить состояние диспенсера', 'Заблокировать диспенсер', 'Снять блокировку диспенсера',
+              'Сервисное обслуживание бенкомата', 'Инкассация банкомата',
+              'Тест контроллера ББ', 'Тест датчиков КББ', 'Тест Д', 'Отключить КББ']
     }
   }
-
-  // handleChange = (value) => {
-  //   console.log(`${value}`);
-  // }
 
   fetchMyData = (string) => {
     fetch(`/send-command?command=${string}`, {
@@ -61,36 +62,27 @@ class App extends React.Component {
                 minHeight: 280,
               }}
             >
-            <Select 
-              onChange={e => this.setState({ search: e })}
-              style={{ width: 480 }}
-              placeholder="Choose Command"
-              dropdownRender={menu => (
-              <div>
-                {menu}
-                <div
-                  style={{ padding: '4px 8px', cursor: 'pointer' }}
-                  onMouseDown={e => e.preventDefault()}
-                >
-                </div>
-              </div>
-              )}
-            >
-              {items.map(item => (
-              <Option key={item}>{item}</Option>
-              ))}
-            </Select>
 
-        <Button type="primary" onClick={() => this.fetchMyData(search)}>Send Command</Button>
+            <AutoComplete
+                onChange={e => this.setState({ search: e })}
+                style={{ width: 480 }}
+                dataSource={items}
+                placeholder="Выберите команду"
+                filterOption={(inputValue, option) =>
+                option.props.children.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                }
+            />
+
+            <Button type="primary" onClick={() => this.fetchMyData(search)}>Отправить команду</Button>
   
-        <List
-          size="large"
-          header={<div>Header</div>}
-          footer={<div>Footer</div>}
-          bordered
-          dataSource={list}
-          renderItem={item => <List.Item>{item}</List.Item>}
-        />
+            <List
+              size="large"
+              header
+              footer
+              bordered
+              dataSource={list}
+              renderItem={item => <List.Item>{item}</List.Item>}
+            />
         </Content>
       </div>
     );
